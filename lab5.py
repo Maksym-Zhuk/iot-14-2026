@@ -1,25 +1,56 @@
 class Smartphone:
     def __init__(self, model="Unknown", price=0.0, numbers=None, memory_gb=0, battery_mah=0):
-        self.__model = model
-        self.__price = price
-        self.__numbers = list(numbers or [])
-        self.__memory_gb = memory_gb
-        self.__battery_mah = battery_mah
+        self.model = model
+        self.price = price
+        self.numbers = numbers or []
+        self.memory_gb = memory_gb
+        self.battery_mah = battery_mah
 
-    def get_model(self):
+    @property
+    def model(self):
         return self.__model
 
-    def get_price(self):
+    @model.setter
+    def model(self, value):
+        self.__model = value
+
+    @property
+    def price(self):
         return self.__price
 
-    def get_numbers(self):
+    @price.setter
+    def price(self, value):
+        if value < 0:
+            raise ValueError('price must be >= 0')
+        self.__price = value
+
+    @property
+    def numbers(self):
         return list(self.__numbers)
 
-    def get_memory_gb(self):
+    @numbers.setter
+    def numbers(self, value):
+        self.__numbers = list(value)
+
+    @property
+    def memory_gb(self):
         return self.__memory_gb
 
-    def get_battery_mah(self):
+    @memory_gb.setter
+    def memory_gb(self, value):
+        if value < 0:
+            raise ValueError('memory_gb must be >= 0')
+        self.__memory_gb = value
+
+    @property
+    def battery_mah(self):
         return self.__battery_mah
+
+    @battery_mah.setter
+    def battery_mah(self, value):
+        if value < 0:
+            raise ValueError('battery_mah must be >= 0')
+        self.__battery_mah = value
 
     def show(self):
         print(f"{self.__model}: {self.__price} UAH, {self.__memory_gb} GB, "
@@ -37,17 +68,17 @@ class PhoneStore:
         self.__phones.append(phone)
 
     def remove(self, model):
-        self.__phones = [p for p in self.__phones if p.get_model() != model]
+        self.__phones = [p for p in self.__phones if p.model != model]
 
     def best_for_budget(self, budget):
         """Найкращий = найбільше пам'яті, потім ємність батареї, потім ціна (серед тих, що вкладаються в бюджет)."""
-        affordable = [p for p in self.__phones if p.get_price() <= budget]
+        affordable = [p for p in self.__phones if p.price <= budget]
         return max(affordable,
-                   key=lambda p: (p.get_memory_gb(), p.get_battery_mah(), p.get_price()),
+                   key=lambda p: (p.memory_gb, p.battery_mah, p.price),
                    default=None)
 
     def sorted_by_price(self):
-        return sorted(self.__phones, key=lambda p: p.get_price())
+        return sorted(self.__phones, key=lambda p: p.price)
 
     def show(self):
         for p in self.sorted_by_price():
